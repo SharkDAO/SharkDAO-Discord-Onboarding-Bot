@@ -1,0 +1,10 @@
+# Token - can be obtained from discord.com/developers/applications/
+TOKEN = ""
+
+# GUILD_ID - an identifier for the relevant discord server
+# Obtaining GUILD_ID: Right click server logo in discord -> Copy ID (enable developer mode in discord settings)
+GUILD_ID = ""
+
+# ROLE_ID - the role that will be assigned to the user after completing !onboard questions succesfully
+# Obtaining ROLE_ID: Server Settings > Roles -> Right click role -> Copy ID (enable developer mode in discord settings)
+ROLE_ID = ""
