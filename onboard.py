@@ -24,7 +24,7 @@ questions = [
         "answer": "b",
     },
     {
-        "question": "Question 3: What is a SHARK token? \nA: A governance token \nB: A token of fractionalized ownership over the DAO’s nouns. \nC: A community access token \nD: All of the above",
+        "question": "Question 3: What is a SHARK token? \nA: A governance token \nB: A community access token \nC: Both of the above",
         "answer": "d",
     },
 ]
