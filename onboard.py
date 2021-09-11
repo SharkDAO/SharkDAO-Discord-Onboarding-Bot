@@ -25,7 +25,7 @@ questions = [
     },
     {
         "question": "Question 3: What is a SHARK token? \nA: A governance token \nB: A community access token \nC: Both of the above",
-        "answer": "d",
+        "answer": "c",
     },
 ]
 
@@ -84,27 +84,33 @@ async def onboard(ctx):
             # Checks if answer is exact match to question
             # If no correct answer is provided in the timeouot period, asyncio.TimeoutError is returned
             def check(m):
-                return m.content.lower() == question["answer"]
+                return (
+                    m.author == ctx.author
+                    and m.guild is None
+                    and m.content.lower() == question["answer"]
+                )
 
             msg = await bot.wait_for(
                 "message",
                 check=check,
                 timeout=timeout,
             )
-            await ctx.author.send("Right {.author.name}!".format(msg))
+            await msg.author.send("Right {.author.name}!".format(msg))
 
         except asyncio.TimeoutError:
-            await ctx.author.send(
+            await msg.author.send(
                 "You took too long to respond correctly. You can try again later using the !onboard command again"
             )
             return True
 
     # Getting here means answering all above questions correctly, at which point bot can assign the relevant role
-    await ctx.message.author.add_roles(role)
-    await ctx.author.send(
+    user_id = msg.author.id
+    author = guild.get_member(user_id)
+    await author.add_roles(role)
+    await msg.author.send(
         "You have completed the onboarding processs and have been assigned a new role in the server!"
     )
-    print("Succesfully onboarded: ", ctx.author.name, "and assigned role:", role.name)
+    print("Succesfully onboarded: ", msg.author.name, "and assigned role:", role.name)
 
 
 bot.run(token)
