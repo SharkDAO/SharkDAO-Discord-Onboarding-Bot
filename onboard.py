@@ -73,7 +73,9 @@ async def onboard(ctx):
     await ctx.author.send(
         "Hi I am SharkDao's Onboarding Bot! My job is to quickly get new members familiarized with SharkDao!"
     )
-    await ctx.author.send("Lets start with some questions")
+    await ctx.author.send(
+        "Lets start with some questions - remember that all the answers are in the #faq!"
+    )
 
     # Cycle through questions
     for question in questions:
@@ -102,7 +104,7 @@ async def onboard(ctx):
                 check=check,
                 timeout=timeout,
             )
-            await msg.author.send("Right {.author.name}!".format(msg))
+            await msg.author.send("Good job, {.author.name}!".format(msg))
 
         except asyncio.TimeoutError:
             await ctx.author.send(
