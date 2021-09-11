@@ -42,7 +42,7 @@ async def on_ready():
 
 @bot.command()
 async def startOnBoardBot(ctx):
-    await ctx.message.delete()
+    # await ctx.message.delete()
 
     # Send a message with embed
     embed = discord.Embed(
@@ -60,7 +60,7 @@ async def startOnBoardBot(ctx):
 @bot.command()
 async def onboard(ctx):
 
-    await ctx.message.delete()
+    # await ctx.message.delete()
     guild = bot.get_guild(guild_id)
     role = guild.get_role(role_id)
 
@@ -69,6 +69,7 @@ async def onboard(ctx):
     # Main logic for Questiono & Answer onboarding process
 
     # DM User and state intent
+    # print("DMing User", ctx.author.name)
     await ctx.author.send(
         "Hi I am SharkDao's Onboarding Bot! My job is to quickly get new members familiarized with SharkDao!"
     )
@@ -79,13 +80,19 @@ async def onboard(ctx):
         # print(question["question"])
         # Send Question
         await ctx.author.send(question["question"])
+        # print("Asking User", ctx.author.name, question["question"])
         try:
 
             # Checks if answer is exact match to question
             # If no correct answer is provided in the timeouot period, asyncio.TimeoutError is returned
             def check(m):
+                # print(
+                #     m.author.id == ctx.author.id,
+                #     m.guild is None,
+                #     m.content.lower() == question["answer"],
+                # )
                 return (
-                    m.author == ctx.author
+                    m.author.id == ctx.author.id
                     and m.guild is None
                     and m.content.lower() == question["answer"]
                 )
@@ -98,7 +105,7 @@ async def onboard(ctx):
             await msg.author.send("Right {.author.name}!".format(msg))
 
         except asyncio.TimeoutError:
-            await msg.author.send(
+            await ctx.author.send(
                 "You took too long to respond correctly. You can try again later using the !onboard command again"
             )
             return True
