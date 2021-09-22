@@ -7,6 +7,9 @@ from discord.ext.commands import Bot
 token = os.getenv("TOKEN")
 guild_id = int(os.getenv("GUILD_ID"))
 role_id = int(os.getenv("ROLE_ID"))
+general_channel_id = "873484935342727241"
+faq_channel_id = "873797683112976404"
+join_sharkdao_channel_id = "874174777005326346"
 
 
 intents = discord.Intents.all()
@@ -74,7 +77,9 @@ async def onboard(ctx):
         "Hi I am SharkDao's Onboarding Bot! My job is to quickly get new members familiarized with SharkDao!"
     )
     await ctx.author.send(
-        "Lets start with some questions - remember that all the answers are in the #faq!"
+        "Lets start with some questions - remember that all the answers are in the <#{faq_channel_id}>!".format(
+            faq_channel_id=faq_channel_id
+        )
     )
 
     # Cycle through questions
@@ -117,7 +122,11 @@ async def onboard(ctx):
     author = guild.get_member(user_id)
     await author.add_roles(role)
     await msg.author.send(
-        "You have completed the onboarding processs and have been assigned a new role in the server!"
+        "Congratulations, you are now assigned the `@faq-master` role! You may now post in <#{general_channel_id}>. \nBecome a Shark to post in more channels and help us build fun Shark and Nouns projects! \nTo join, follow the instructions in <#{faq_channel_id}> to get SHARK tokens, and then verify in <#{join_sharkdao_channel_id}> to receive your `@sharks` role.".format(
+            general_channel_id=general_channel_id,
+            faq_channel_id=faq_channel_id,
+            join_sharkdao_channel_id=join_sharkdao_channel_id,
+        )
     )
     print("Succesfully onboarded: ", msg.author.name, "and assigned role:", role.name)
 
