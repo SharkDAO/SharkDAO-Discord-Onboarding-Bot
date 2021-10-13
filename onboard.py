@@ -83,14 +83,15 @@ async def onboard(ctx):
     )
 
     # Cycle through questions
-    for question in questions:
+    question_index = 0
+    while True:
+        question = questions[question_index]
         # print(question["question"])
         # Send Question
         await ctx.author.send(question["question"])
         # print("Asking User", ctx.author.name, question["question"])
         try:
 
-            # Checks if answer is exact match to question
             # If no correct answer is provided in the timeouot period, asyncio.TimeoutError is returned
             def check(m):
                 # print(
@@ -98,18 +99,33 @@ async def onboard(ctx):
                 #     m.guild is None,
                 #     m.content.lower() == question["answer"],
                 # )
-                return (
-                    m.author.id == ctx.author.id
-                    and m.guild is None
-                    and m.content.lower() == question["answer"]
-                )
+                return m.author.id == ctx.author.id and m.guild is None
 
             msg = await bot.wait_for(
                 "message",
                 check=check,
                 timeout=timeout,
             )
-            await msg.author.send("Good job, {.author.name}!".format(msg))
+            # print(msg.content.lower(), msg.author.id, ctx.author.id)
+            m = msg
+            if (
+                m.author.id == ctx.author.id
+                and m.guild is None
+                and m.content.lower() == question["answer"]
+            ):
+                await msg.author.send("Good job, {.author.name}!".format(msg))
+                question_index = question_index + 1
+                if question_index == 3:
+                    break
+            elif (
+                m.author.id == ctx.author.id
+                and m.guild is None
+                and m.content.lower() != question["answer"]
+            ):
+                await msg.author.send(
+                    "That's not quite right, {.author.name}!".format(msg)
+                )
+                continue
 
         except asyncio.TimeoutError:
             await ctx.author.send(
@@ -118,17 +134,20 @@ async def onboard(ctx):
             return True
 
     # Getting here means answering all above questions correctly, at which point bot can assign the relevant role
-    user_id = msg.author.id
-    author = guild.get_member(user_id)
-    await author.add_roles(role)
-    await msg.author.send(
-        "Congratulations, you are now assigned the `@faq-master` role! You may now post in <#{general_channel_id}>. \nBecome a Shark to post in more channels and help us build fun Shark and Nouns projects! \nTo join, follow the instructions in <#{faq_channel_id}> to get SHARK tokens, and then verify in <#{join_sharkdao_channel_id}> to receive your `@sharks` role.".format(
-            general_channel_id=general_channel_id,
-            faq_channel_id=faq_channel_id,
-            join_sharkdao_channel_id=join_sharkdao_channel_id,
+    if question_index > 2:
+        user_id = msg.author.id
+        author = guild.get_member(user_id)
+        await author.add_roles(role)
+        await msg.author.send(
+            "Congratulations, you are now assigned the `@faq-master` role! You may now post in <#{general_channel_id}>. \nBecome a Shark to post in more channels and help us build fun Shark and Nouns projects! \nTo join, follow the instructions in <#{faq_channel_id}> to get SHARK tokens, and then verify in <#{join_sharkdao_channel_id}> to receive your `@sharks` role.".format(
+                general_channel_id=general_channel_id,
+                faq_channel_id=faq_channel_id,
+                join_sharkdao_channel_id=join_sharkdao_channel_id,
+            )
         )
-    )
-    print("Succesfully onboarded: ", msg.author.name, "and assigned role:", role.name)
+        print(
+            "Succesfully onboarded: ", msg.author.name, "and assigned role:", role.name
+        )
 
 
 bot.run(token)
